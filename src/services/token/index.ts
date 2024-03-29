@@ -12,7 +12,7 @@ export class TokenManager {
 	// converte o objeto de dados (payload) para um token string
 	public createToken = (payload: TokenPayload): string => {
 		const token = jwt.sign(payload, process.env.JWT_KEY as string, {
-			expiresIn: process.env.JWT_EXPIRES_IN || 7,
+			expiresIn: process.env.JWT_EXPIRES_IN,
 		});
 		return token;
 	};
@@ -25,6 +25,7 @@ export class TokenManager {
 			// se a validação falhar, um erro é disparado pelo jsonwebtoken
 			// nós pegamos o erro aqui e retornamos null para a Business saber que falhou
 		} catch (error) {
+			console.log(error)
 			return null;
 		}
 	};

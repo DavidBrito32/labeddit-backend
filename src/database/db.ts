@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export abstract class Db {
-    public static connection = knex({
+	public static connection = knex({
 		client: "sqlite3",
 		connection: {
 			filename: process.env.DB_PATH_LOCATION as string || "./src/database/social.db",

@@ -24,23 +24,23 @@ export interface InsertUserT {
 
 
 export class UserDB extends Db {
-    public login = async (input: UserLoginT): Promise<UserDbT | undefined> => {
-        const { email, password } = input;
-        const [user]: Array<UserDbT> = await Db.connection("users").where({email, password});
-        return user;
-    }
+	public login = async (input: UserLoginT): Promise<UserDbT | undefined> => {
+		const { email, password } = input;
+		const [user]: Array<UserDbT> = await Db.connection("users").where({email, password});
+		return user;
+	};
 
-    public findUserById = async (id: string): Promise<UserDbT | undefined> => {
-        const [user]: Array<UserDbT> = await Db.connection("users").where({id});
-        return user;
-    }
+	public findUserById = async (id: string): Promise<UserDbT | undefined> => {
+		const [user]: Array<UserDbT> = await Db.connection("users").where({id});
+		return user;
+	};
 
-    public findUserByEmail = async (email: string): Promise<UserDbT | undefined> => {
-        const [user]: Array<UserDbT> = await Db.connection("users").where({email});
-        return user;
-    }
+	public findUserByEmail = async (email: string): Promise<UserDbT | undefined> => {
+		const [user]: Array<UserDbT> = await Db.connection("users").where({email});
+		return user;
+	};
 
-    public insertUser = async (input: InsertUserT): Promise<void> => {
-        await Db.connection("users").insert(input);
-    }
+	public insertUser = async (input: InsertUserT): Promise<void> => {
+		await Db.connection("users").insert(input);
+	};
 }

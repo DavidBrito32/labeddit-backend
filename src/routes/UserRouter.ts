@@ -8,12 +8,12 @@ import { HashManager } from "../services/HashManager";
 
 export const User = express.Router();
 const userControler = new UserController(
-    new UserBusiness(
-        new UserDB(), 
-        new TokenManager(), 
-        new IdGenerator(),
-        new HashManager()
-        )
+	new UserBusiness(
+		new UserDB(), 
+		new TokenManager(), 
+		new IdGenerator(),
+		new HashManager()
+	)
 );
 
 User.post("/login", userControler.login);
