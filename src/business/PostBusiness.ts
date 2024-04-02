@@ -33,48 +33,54 @@ export class PostBusiness {
 
 		const finder = await this.postDB.getAllPosts();
 		const exists = finder.find((item) => item.id === postId);
-		console.log(exists);
 
 		if(!exists){
 			throw new NotFound("Desculpe, Recurso não encontrado! 🙅‍♂️");
 		}
 
-		const post = new Post(exists.id, exists.content, exists.creator_id, exists.creator_name, exists.created_at, exists.updated_at, exists.likes, exists.dislikes);
-
-		if(exists.likes === 0 && like){
-			post.setLikes(1);
-			post.setDislike(0);
-
-			const insert: LikeManager = {
+		if(exists.likes === 0 && exists.dislikes === 0 && like){
+			const action: LikeManager = {
 				creator_id: verify.id,
-				like: post.getLikes(),
-				dislike: post.getDislike(),
-				post_id: post.getId()
+				dislike: 0,
+				like: 1,
+				post_id: postId
 			};
 
-			console.log(post.getLikes())
-			await this.postDB.insertLike(insert);
-		}else if(exists.likes === 1 && !like){
-			post.setLikes(0);
-			post.setDislike(1);
-			const insert: LikeManager = {
-				creator_id: verify.id,
-				like: post.getLikes(),
-				dislike: post.getDislike(),
-				post_id: post.getId()
-			};
-			await this.postDB.updateLike(insert);
-		}else if(exists.dislikes === 1 && true){
-			post.setLikes(1);
-			post.setDislike(0);
-			const insert: LikeManager = {
-				creator_id: verify.id,
-				like: post.getLikes(),
-				dislike: post.getDislike(),
-				post_id: post.getId()
-			};
-			await this.postDB.updateLike(insert);
+			await this.postDB.insertLike(action);
 		}
+
+		if(exists.likes === 0 && exists.dislikes === 0 && !like){
+			const action: LikeManager = {
+				creator_id: verify.id,
+				dislike: 1,
+				like: 0,
+				post_id: postId
+			};
+
+			await this.postDB.insertLike(action);
+		}
+
+		if(exists.likes === 1 && exists.dislikes === 0 && like){
+			const action: LikeManager = {
+				creator_id: verify.id,
+				dislike: 0,
+				like: 0,
+				post_id: postId
+			};
+
+			await this.postDB.updateLike(action);
+		}
+
+		if(exists.likes === 0 && exists.dislikes === 1 && !like){
+			const action: LikeManager = {
+				creator_id: verify.id,
+				dislike: 0,
+				like: 0,
+				post_id: postId
+			};
+
+			await this.postDB.updateLike(action);
+		}		
 
 		return {
 			message: "ação Realizada com sucesso! ✔✨"
