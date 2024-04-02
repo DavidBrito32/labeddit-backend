@@ -26,6 +26,13 @@ export interface UpdatePosts {
     updated_at: string;
 }
 
+export interface LikeManager {
+    creator_id: string;
+    post_id: string;
+    like: number;
+    dislike: number;
+}
+
 export class PostDB extends Db {
 
 	public getAllPosts = async (): Promise<Array<GetPosts>> => {
@@ -49,22 +56,52 @@ export class PostDB extends Db {
 		return posts;
 	};
 
-    public findPostsById = async (id: string): Promise<GetPosts | undefined> => {
-        const [post]: Array<GetPosts> | undefined = await Db.connection("posts").where({id});
-        return post;
-    }
-    
-	public insertPost = async (input: InsertPosts): Promise<void> => {
-        const { id, content, creator_id, created_at } = input;
-        await Db.connection("posts").insert({id, content, creator_id, created_at});
+	public findPostsById = async (id: string): Promise<GetPosts | undefined> => {
+		const [post]: Array<GetPosts> | undefined = await Db.connection("posts").where({id});
+		return post;
 	};
 
-    public updatePost = async (input: UpdatePosts): Promise<void> => {
-        const { idPost, content, creator_id, updated_at } = input;
-        await Db.connection("posts").update({content, updated_at}).where({id: idPost, creator_id});
-    }
+	public insertLike = async (input: LikeManager): Promise<void> => {
+		const { post_id, creator_id, like, dislike }: LikeManager = input;
+		await Db.connection("likes_dislikes").insert({
+			creator_id,
+			post_id,
+			like,
+			dislike
+		});
+	};
 
-    public deletePost = async (id: string): Promise<void> => {
-        await Db.connection("posts").delete().where({id});
-    }
+	public updateLike = async (input: LikeManager): Promise<void> => {
+		const { post_id, creator_id, like, dislike }: LikeManager = input;
+		await Db.connection("likes_dislikes").update({
+			like,
+			dislike
+		}).where({
+			creator_id,
+			post_id
+		});
+	};
+
+	public deleteLike = async (input: LikeManager): Promise<void> => {
+		const { creator_id, post_id }: LikeManager = input;
+
+		await Db.connection("posts").delete().where({
+			creator_id, 
+			post_id
+		});
+	};
+    
+	public insertPost = async (input: InsertPosts): Promise<void> => {
+		const { id, content, creator_id, created_at } = input;
+		await Db.connection("posts").insert({id, content, creator_id, created_at});
+	};
+
+	public updatePost = async (input: UpdatePosts): Promise<void> => {
+		const { idPost, content, creator_id, updated_at } = input;
+		await Db.connection("posts").update({content, updated_at}).where({id: idPost, creator_id});
+	};
+
+	public deletePost = async (id: string): Promise<void> => {
+		await Db.connection("posts").delete().where({id});
+	};
 }

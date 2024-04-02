@@ -13,4 +13,8 @@ Post.get("/", Control.getAllPosts);
 
 Post.post("/", Control.createPost);
 
+Post.post("/:id/like", Control.likePosts);
+
 Post.put("/:id", Control.editPost);
+
+Post.delete("/:id", Control.deletePost);

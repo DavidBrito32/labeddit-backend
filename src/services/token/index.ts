@@ -25,7 +25,7 @@ export class TokenManager {
 			// se a validação falhar, um erro é disparado pelo jsonwebtoken
 			// nós pegamos o erro aqui e retornamos null para a Business saber que falhou
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 			return null;
 		}
 	};
