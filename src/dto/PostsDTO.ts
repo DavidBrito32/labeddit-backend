@@ -30,13 +30,13 @@ export interface PostModelOutputDTO {
     updatedAt: string | null;
     creatorName: string;
 }
+
 // ------------------------------------------------------------------------------------
 //INPUT DTO
 
 export interface CreatePostInputDTO  {
     authorization: string;
     content: string;
-    creatorId: string;
 }
 
 export const CreatePostSchemaDTO = z.object({
@@ -44,10 +44,6 @@ export const CreatePostSchemaDTO = z.object({
 		invalid_type_error: "'content' - deve ser enviado no formato string",
 		required_error: "'content' - não pode ser omitido"
 	}).min(1),
-	creatorId: z.string({
-		invalid_type_error: "'creatorId' - deve ser enviado no formato string",
-		required_error: "'creatorId' - não pode ser omitido"
-	}).min(2),
 	authorization: z.string({
 		invalid_type_error: "'authorization' - deve ser enviado em formato string",
 		required_error: "'authorization' - é um dado obrigatorio"
@@ -139,4 +135,91 @@ export const LikePostSchema = z.object({
 
 export interface LikePostOutputDTO {
     message: string;
+}
+
+//------------------------------------------------------------------------------------
+// COMMENTS
+
+export interface GetAllCommentsInputDTO {
+	authorization: string;
+	idPost: string;
+}
+
+export const GetAllCommentsSchema = z.object({
+	idPost: z.string({
+		invalid_type_error: "'idPost' - deve ser enviado no formato string",
+		required_error: "'idPost' - é um dado obrigatorio, não pode ser omitido"
+	}),
+	authorization: z.string({
+		invalid_type_error: "'authorization' - deve ser enviado no formato string",
+		required_error: "'authorization' - é um dado obrigatorio, não pode ser omitido"
+	})
+}).transform(data => data as GetAllCommentsInputDTO);
+
+export interface GetCommentsOutPutDTO {
+	id: string;
+	creatorId: string;
+	creatorName: string;
+	comment: string;
+	postId: string;
+	postComment: string;
+	createdAt: string;
+	like: number;
+	dislike: number;
+	updatedAt: string | null;
+}
+
+export interface InputCommentDTO {
+	id: string;
+	authorization: string;
+	comment: string;
+}
+
+export const InputCommentSchema = z.object({
+	id: z.string({
+		invalid_type_error: "'id' - deve ser enviado no formato string",
+		required_error: "'id' - é um dado obrigatorio, não pode ser omitido"
+	}).min(2),
+	authorization: z.string({
+		invalid_type_error: "'authorization' - deve ser enviado no formato string",
+		required_error: "'authorization' - é um dado obrigatorio, não pode ser omitido"
+	}).min(2),
+	comment: z.string({
+		invalid_type_error: "'comment' - deve ser enviado no formato string",
+		required_error: "'comment' - é um dado obrigatorio, não pode ser omitido"
+	}).min(2)
+}).transform(data => data as InputCommentDTO);
+
+export interface InputCommentOutputDTO {
+	message: string;
+}
+
+
+// ---------------
+
+//LIKE COMMENT
+
+export interface LikeCommentInputDTO {
+	authorization: string;
+	idComment: string;
+	like: boolean;
+}
+
+export const LikeCommentSchema = z.object({
+	authorization: z.string({
+		invalid_type_error: "'authorization' - deve ser enviado no formato string",
+		required_error: "'authorization' - é um dado obrigatorio, não pode ser omitido"
+	}),
+	idComment: z.string({
+		invalid_type_error: "'idComment' - deve ser enviado no formato string",
+		required_error: "'idComment' - é um dado obrigatorio, não pode ser omitido"
+	}),
+	like: z.boolean({
+		invalid_type_error: "'like' - deve ser enviado no formato boolean",
+		required_error: "'like' - é um dado obrigatorio, não pode ser omitido"
+	})
+}).transform(data => data as LikeCommentInputDTO);
+
+export interface LikeCommentOutputDTO {
+	message: string;
 }

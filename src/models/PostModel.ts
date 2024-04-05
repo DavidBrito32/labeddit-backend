@@ -5,6 +5,7 @@ export class Post {
 	public content: string;
 	public creatorId: string;
 	public creatorName: string;
+	public likedAsUser: string | null;
 	public createdAt: string;
 	public updatedAt: string | null;
 	public like: number;
@@ -14,6 +15,7 @@ export class Post {
 		content: string,
 		creatorId: string,
 		creatorName: string,
+		likedAsUser: string | null,
 		createdAt: string,
 		updatedAt: string | null,
 		like: number,
@@ -23,6 +25,7 @@ export class Post {
 		this.content = content;
 		this.creatorId = creatorId;
 		this.creatorName = creatorName;
+		this.likedAsUser = likedAsUser;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 		this.like = like;
@@ -59,6 +62,14 @@ export class Post {
 
 	public setCreatorName = (creatorName: string): void => {
 		this.creatorName = creatorName;
+	};
+
+	public getLikedAsUser = (): string | null => {
+		return this.likedAsUser;
+	};
+
+	public setLikedAsUser = (LikedAsUser: string | null): void => {
+		this.likedAsUser = LikedAsUser;
 	};
 
 	public getCreatedAt = (): string => {

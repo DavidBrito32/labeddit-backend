@@ -6,7 +6,11 @@ import { IdGenerator } from "../services/uuid";
 import { TokenManager } from "../services/token";
 
 export const Post = express.Router();
-const Control = new PostController(new PostBusiness(new PostDB(), new IdGenerator(), new TokenManager()));
+const Control = new PostController(
+	new PostBusiness(new PostDB(), 
+		new IdGenerator(), 
+		new TokenManager())
+);
 
 
 Post.get("/", Control.getAllPosts);
@@ -14,6 +18,13 @@ Post.get("/", Control.getAllPosts);
 Post.post("/", Control.createPost);
 
 Post.post("/:id/like", Control.likePosts);
+
+Post.post("/comments", Control.createComment);
+
+Post.post("/comments/:id/like", Control.insertLikeInComment);
+
+Post.get("/:id/comments", Control.GetAllComments);
+
 
 Post.put("/:id", Control.editPost);
 

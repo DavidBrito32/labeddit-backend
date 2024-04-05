@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { PostBusiness } from "../business/PostBusiness";
 import { ZodError } from "zod";
 import { CustomError } from "../errors/CustomError";
-import { CreatePostSchemaDTO, DeletePostSchema, getPostsInputSchemaDTO, LikePostSchema, UpdatePostInputSchemaDTO } from "../dto/PostsDTO";
+import { CreatePostSchemaDTO, DeletePostSchema, GetAllCommentsSchema, getPostsInputSchemaDTO, InputCommentSchema, LikeCommentSchema, LikePostSchema, UpdatePostInputSchemaDTO } from "../dto/PostsDTO";
 
 export class PostController {
 	constructor(
@@ -90,7 +90,6 @@ export class PostController {
 		}
 	}; // OK ✔
 
-
 	public deletePost = async (req: Request, res: Response): Promise<void> => {
 		try{
 			const input = DeletePostSchema.parse({
@@ -111,5 +110,68 @@ export class PostController {
 		}
 	}; // OK ✔
 
-	
+	public GetAllComments = async (req: Request, res: Response): Promise<void> => {
+		try{
+			const input = GetAllCommentsSchema.parse({
+				idPost: req.params.id,
+				authorization: req.headers.authorization
+			});
+
+			const output = await this.postBusinnes.getAllCommentsPostsById(input);
+			res.status(200).send(output);
+		}catch (err){
+			if(err instanceof ZodError){
+				res.status(400).send(err.issues);
+			}else if (err instanceof CustomError){
+				res.status(err.statusCode).send(err.message);
+			}else{
+				res.status(500).send(`Erro não tratado: DESC: ${err}`);
+			}
+		}
+	};
+
+	public createComment = async (req: Request, res: Response): Promise<void> => {
+		try{
+			console.log(req.params);
+			const input = InputCommentSchema.parse({
+				authorization: req.headers.authorization,
+				comment: req.body.comment,
+				id: req.body.id,
+			});
+
+			const output = await this.postBusinnes.createCommentInPost(input);
+			res.status(200).send(output);
+		}catch (err){
+			if(err instanceof ZodError){
+				res.status(400).send(err.issues);
+			}else if (err instanceof CustomError){
+				res.status(err.statusCode).send(err.message);
+			}else{
+				res.status(500).send(`Erro não tratado: DESC: ${err}`);
+			}
+		}
+	};
+
+	public insertLikeInComment = async (req: Request, res: Response): Promise<void> => {
+		try{
+			const input = LikeCommentSchema.parse({
+				authorization: req.headers.authorization,
+				idComment: req.params.id,
+				like: req.body.like
+			});
+
+			const output = await this.postBusinnes.insertLikeComment(input);
+			res.status(201).send(output);
+		}catch (err){
+			if(err instanceof ZodError){
+				res.status(400).send(err.issues);
+			}else if (err instanceof CustomError){
+				res.status(err.statusCode).send(err.message);
+			}else{
+				res.status(500).send(`Erro não tratado: DESC: ${err}`);
+			}
+		}
+	};
+
+		
 }
