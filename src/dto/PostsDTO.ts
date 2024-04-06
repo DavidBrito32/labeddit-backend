@@ -194,6 +194,50 @@ export interface InputCommentOutputDTO {
 	message: string;
 }
 
+export interface CommentInputDeleteDTO {
+	authorization: string;
+	id: string;
+}
+
+export interface CommentOutputDeleteDTO {
+	message: string;
+}
+
+export const CommentInputDeleteSchema = z.object({
+	authorization: z.string({
+		invalid_type_error: "'authorization' - deve ser enviado no formato string",
+		required_error: "'authorization' - é um dado obrigatorio, não pode ser omitido"
+	}).min(2),
+	id: z.string({
+		invalid_type_error: "'id' - deve ser enviado no formato string",
+		required_error: "'id' - é um dado obrigatorio, não pode ser omitido"
+	})
+}).transform(data => data as CommentInputDeleteDTO)
+
+export interface CommentInputUpdateDTO {
+	id: string;
+	comment: string;
+	authorization: string;
+}
+export interface CommentOutputUpdateDTO {
+	message: string;
+}
+
+export const CommentInputUpdateSchemaDTO = z.object({
+	authorization: z.string({
+		invalid_type_error: "'authorization' - deve ser enviado no formato string",
+		required_error: "'authorization' - é um dado obrigatorio, não pode ser omitido"
+	}).min(2),
+	id: z.string({
+		invalid_type_error: "'id' - deve ser enviado no formato string",
+		required_error: "'id' - é um dado obrigatorio, não pode ser omitido"
+	}).min(2),
+	comment: z.string({
+		invalid_type_error: "'comment' - deve ser enviado no formato string",
+		required_error: "'comment' - é um dado obrigatorio, não pode ser omitido"
+	}).min(2)
+}).transform(data => data as CommentInputUpdateDTO);
+
 
 // ---------------
 

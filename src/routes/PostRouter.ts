@@ -12,7 +12,6 @@ const Control = new PostController(
 		new TokenManager())
 );
 
-
 Post.get("/", Control.getAllPosts);
 
 Post.post("/", Control.createPost);
@@ -20,6 +19,10 @@ Post.post("/", Control.createPost);
 Post.post("/:id/like", Control.likePosts);
 
 Post.post("/comments", Control.createComment);
+
+Post.put("/comments/:id", Control.updateCommet);
+
+Post.delete("/comments/:id", Control.removeComment);
 
 Post.post("/comments/:id/like", Control.insertLikeInComment);
 

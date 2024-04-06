@@ -86,6 +86,12 @@ export interface GetLikes {
 	dislike: number;
 }
 
+export interface updateComment {
+	id: string;
+	comment: string;
+	updated_at: string;
+}
+
 export class PostDB extends Db {
 	public getAllPosts = async (): Promise<Array<GetPosts>> => {
 		const query: string = `
@@ -150,6 +156,36 @@ GROUP BY
 			});
 	};
 
+	public deleteLike = async (input: LikeManager): Promise<void> => {
+		const { creator_id, post_id }: LikeManager = input;
+
+		await Db.connection("posts").delete().where({
+			creator_id,
+			post_id,
+		});
+	};
+
+	public insertPost = async (input: InsertPosts): Promise<void> => {
+		const { id, content, creator_id, created_at } = input;
+		await Db.connection("posts").insert({
+			id,
+			content,
+			creator_id,
+			created_at,
+		});
+	};
+
+	public updatePost = async (input: UpdatePosts): Promise<void> => {
+		const { idPost, content, creator_id, updated_at } = input;
+		await Db.connection("posts")
+			.update({ content, updated_at })
+			.where({ id: idPost, creator_id });
+	};
+
+	public deletePost = async (id: string): Promise<void> => {
+		await Db.connection("posts").delete().where({ id });
+	};
+	
 	public getAllCommentById = async (
 		id: string
 	): Promise<Array<GetAllComments>> => {
@@ -233,6 +269,14 @@ GROUP BY
 		});
 	};
 
+	public updateComment = async (input: updateComment): Promise<void> => {
+		const { id, comment, updated_at } = input;
+		await Db.connection("comments").update({
+			comment,
+			updated_at
+		}).where({id});
+	}
+
 	public insertLikeComment = async (
 		input: LikeCommentManager
 	): Promise<void> => {
@@ -260,33 +304,7 @@ GROUP BY
 			});
 	};
 
-	public deleteLike = async (input: LikeManager): Promise<void> => {
-		const { creator_id, post_id }: LikeManager = input;
-
-		await Db.connection("posts").delete().where({
-			creator_id,
-			post_id,
-		});
-	};
-
-	public insertPost = async (input: InsertPosts): Promise<void> => {
-		const { id, content, creator_id, created_at } = input;
-		await Db.connection("posts").insert({
-			id,
-			content,
-			creator_id,
-			created_at,
-		});
-	};
-
-	public updatePost = async (input: UpdatePosts): Promise<void> => {
-		const { idPost, content, creator_id, updated_at } = input;
-		await Db.connection("posts")
-			.update({ content, updated_at })
-			.where({ id: idPost, creator_id });
-	};
-
-	public deletePost = async (id: string): Promise<void> => {
-		await Db.connection("posts").delete().where({ id });
-	};
+	public deleteComment = async (id: string): Promise<void> => {
+		await Db.connection("comments").delete().where({id});
+	}
 }

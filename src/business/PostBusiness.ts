@@ -1,5 +1,5 @@
-import { CommentManager, GetAllComments, InsertPosts, LikeCommentManager, LikeManager, PostDB, UpdatePosts } from "../database/PostDB";
-import { CreatePostInputDTO, CreatePostsOutPutDTO, DeletePostsInputDTO, DeletePostsOutputDTO, GetAllCommentsInputDTO, GetCommentsOutPutDTO, getPostsInputDTO, InputCommentDTO, InputCommentOutputDTO, LikeCommentInputDTO, LikeCommentOutputDTO, LikePostInputDTO, LikePostOutputDTO, PostModelOutputDTO, UpdatePostInputDTO, UpdatePostOutputDTO } from "../dto/PostsDTO";
+import { CommentManager, FindCommentById, GetAllComments, InsertPosts, LikeCommentManager, LikeManager, PostDB, updateComment, UpdatePosts } from "../database/PostDB";
+import { CommentInputDeleteDTO, CommentInputUpdateDTO, CommentOutputDeleteDTO, CommentOutputUpdateDTO, CreatePostInputDTO, CreatePostsOutPutDTO, DeletePostsInputDTO, DeletePostsOutputDTO, GetAllCommentsInputDTO, GetCommentsOutPutDTO, getPostsInputDTO, InputCommentDTO, InputCommentOutputDTO, LikeCommentInputDTO, LikeCommentOutputDTO, LikePostInputDTO, LikePostOutputDTO, PostModelOutputDTO, UpdatePostInputDTO, UpdatePostOutputDTO } from "../dto/PostsDTO";
 import { BadRequest } from "../errors/BadRequest";
 import { NotFound } from "../errors/NotFound";
 import { Comments } from "../models/PostCommentsModel";
@@ -135,7 +135,7 @@ export class PostBusiness {
 		const exists = await this.postDB.findPostsById(idPost);
 
 		if(!exists){
-			throw new NotFound("post não encontrado");
+			throw new NotFound("Desculpe, Post não encontrado! 🙅‍♂️");
 		}
 
 		if(verifyToken.id !== exists.creator_id){
@@ -158,17 +158,15 @@ export class PostBusiness {
 
 	public deletePost = async (input: DeletePostsInputDTO): Promise<DeletePostsOutputDTO> => {
 		const { id, authorization }: DeletePostsInputDTO = input;
-
 		const verify = this.tokenManager.getPayload(authorization.split(" ")[1]);
 		
 		if(verify === null){
 			throw new BadRequest("'authorization' - não foi possivel validar sua identidade");
 		}
-
 		const exists = await this.postDB.findPostsById(id);
 
 		if(!exists){
-			throw new BadRequest("'id' - verifique o post e tente novamente");
+			throw new BadRequest("Desculpe, Post não encontrado! 🙅‍♂️");
 		}
 
 		if(exists.creator_id !== verify.id){
@@ -213,7 +211,7 @@ export class PostBusiness {
 		const PostExists = await this.postDB.findPostsById(id);
 		
 		if(!PostExists){
-			throw new NotFound("'post' - não encontrado");
+			throw new NotFound("Desculpe, Post não encontrado! 🙅‍♂️");
 		}
 
 		const idGerado = this.idGenerator.generate();
@@ -233,6 +231,66 @@ export class PostBusiness {
 		};
 	};
 
+	public updateComment = async (input: CommentInputUpdateDTO): Promise<CommentOutputUpdateDTO> => {
+		const { authorization, comment, id } = input;
+		const verify = this.tokenManager.getPayload(authorization.split(" ")[1]);
+		
+		if(verify === null){
+			throw new BadRequest("'authorization' - não foi possivel validar sua identidade");
+		}
+
+		const exists: FindCommentById = await this.postDB.findCommentById(id);
+
+		if(!exists){
+			throw new BadRequest("Desculpe, Comentario não encontrado! 🙅‍♂️");
+		}
+
+		if(exists.creator_id !== verify.id){
+			throw new BadRequest("Voce nao pode editar um comentario de outro usuario");
+		}
+
+		const inputUpdate: updateComment = {
+			id: exists.id,
+			comment,
+			updated_at: new Date().toISOString()
+		}
+
+		await this.postDB.updateComment(inputUpdate);
+
+		return {
+			message: "Comentario editado com sucesso!"
+		};
+
+	} 
+
+	public deleteComment = async (input: CommentInputDeleteDTO): Promise<CommentOutputDeleteDTO> => {
+		const { authorization, id }: CommentInputDeleteDTO = input;
+
+		const verify = this.tokenManager.getPayload(authorization.split(" ")[1]);
+		
+		if(verify === null){
+			throw new BadRequest("'authorization' - não foi possivel validar sua identidade");
+		}
+
+		const comment: FindCommentById = await this.postDB.findCommentById(id);
+
+		if(!comment){
+			throw new BadRequest("Desculpe, Comentario não encontrado! 🙅‍♂️");
+		}
+
+		if(comment.creator_id !== verify.id){
+			throw new BadRequest("Não pode apagar o comentario de outra pessoa");
+		}
+
+		await this.postDB.deleteComment(comment.id);
+
+		return {
+			message: "Comentario removido com sucesso!"
+		}
+
+
+	}
+
 	public insertLikeComment = async (input: LikeCommentInputDTO): Promise<LikeCommentOutputDTO> => {
 		const { authorization, idComment, like }: LikeCommentInputDTO = input;
 		const verify = this.tokenManager.getPayload(authorization.split(" ")[1]);
@@ -243,7 +301,7 @@ export class PostBusiness {
 
 		const comment = await this.postDB.findCommentById(idComment);
 		if(!comment){
-			throw new NotFound("'idComment' - comentario não encontrado");
+			throw new NotFound("Desculpe, Comentario não encontrado! 🙅‍♂️");
 		}
 
 		const likedUser = await this.postDB.findLikeByCommentIdAndUserId(idComment, verify.id);		
