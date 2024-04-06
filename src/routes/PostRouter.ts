@@ -18,7 +18,7 @@ Post.post("/", Control.createPost);
 
 Post.post("/:id/like", Control.likePosts);
 
-Post.post("/comments", Control.createComment);
+Post.post("/comments/:id", Control.createComment);
 
 Post.put("/comments/:id", Control.updateCommet);
 
@@ -27,7 +27,6 @@ Post.delete("/comments/:id", Control.removeComment);
 Post.post("/comments/:id/like", Control.insertLikeInComment);
 
 Post.get("/:id/comments", Control.GetAllComments);
-
 
 Post.put("/:id", Control.editPost);
 

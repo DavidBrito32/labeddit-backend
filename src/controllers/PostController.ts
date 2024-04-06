@@ -35,7 +35,7 @@ export class PostController {
 			});
 
 			const output = await this.postBusinnes.likePosts(input);
-			res.status(200).send(output);
+			res.status(201).send(output);
 		}catch (err){
 			if(err instanceof ZodError){
 				res.status(400).send(err.issues);
@@ -133,14 +133,17 @@ export class PostController {
 
 	public createComment = async (req: Request, res: Response): Promise<void> => {
 		try{
+			if(req.params.id === ":id"){
+				throw new BadRequest("'id' - nao pode ser omitido");
+			}
 			const input = InputCommentSchema.parse({
 				authorization: req.headers.authorization,
 				comment: req.body.comment,
-				id: req.body.id,
+				id: req.params.id,
 			});
 
 			const output = await this.postBusinnes.createCommentInPost(input);
-			res.status(200).send(output);
+			res.status(201).send(output);
 		}catch (err){
 			if(err instanceof ZodError){
 				res.status(400).send(err.issues);
