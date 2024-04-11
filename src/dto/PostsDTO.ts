@@ -27,6 +27,7 @@ export interface PostModelOutputDTO {
     dislike: number;
     creatorId: string;
     createdAt: string;
+	comments: number;
     updatedAt: string | null;
     creatorName: string;
 }

@@ -21,7 +21,7 @@ export class PostBusiness {
 		}
 		
 		const posts = await this.postDB.getAllPosts();
-		const outPut: Array<PostModelOutputDTO> = posts.map(post => new Post(post.id, post.content, post.creator_id, post.creator_name, post.liked_as_user ,post.created_at, post.updated_at ,post.likes, post.dislikes));
+		const outPut: Array<PostModelOutputDTO> = posts.map(post => new Post(post.id, post.content, post.creator_id, post.creator_name, post.liked_as_user, post.comments ,post.created_at, post.updated_at ,post.likes, post.dislikes));
 		return outPut;
 	};
 
@@ -173,7 +173,7 @@ export class PostBusiness {
 			throw new BadRequest("Não é possivel deletar um post de outro usuario");
 		}
 
-		const newPost = new Post(exists.id, exists.content, exists.creator_id, exists.creator_name, exists.liked_as_user, exists.created_at, exists.updated_at, exists.likes, exists.dislikes);
+		const newPost = new Post(exists.id, exists.content, exists.creator_id, exists.creator_name, exists.liked_as_user, exists.comments, exists.created_at, exists.updated_at, exists.likes, exists.dislikes);
 
 		await this.postDB.deletePost(newPost.getId());
 

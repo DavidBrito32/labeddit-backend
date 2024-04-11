@@ -23,7 +23,7 @@ export class UserBusiness {
         
 		const checkPassword = await this.hash.compare(password, checkUser.password);
 		if(!checkPassword){
-			throw new BadRequest("Conferir Senha");
+			throw new BadRequest("Verifique as informações e tente novamente");
 		}
 
 		const payload: TokenPayload = {
@@ -34,7 +34,7 @@ export class UserBusiness {
 		const token = this.token.createToken(payload);
 
 		const output: LoginOutputDTO = {
-			message: "Bem vindo de volta",
+			message: "Bem vindo de volta 😎🌻",
 			token
 		};
 

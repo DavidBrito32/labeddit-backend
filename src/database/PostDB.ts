@@ -9,6 +9,7 @@ export interface GetPosts {
   creator_name: string;
   likes: number;
   dislikes: number;
+  comments: number;
   created_at: string;
   updated_at: string;
 }
@@ -96,24 +97,19 @@ export class PostDB extends Db {
 	public getAllPosts = async (): Promise<Array<GetPosts>> => {
 		const query: string = `
 		SELECT
-    posts.id as id,
-    posts.content as content,
-    posts.creator_id as creator_id,
-    users.name as creator_name,
-    SUM(CASE WHEN likes_dislikes.like = 1 THEN 1 ELSE 0 END) AS likes,
-    SUM(CASE WHEN likes_dislikes.dislike = 1 THEN 1 ELSE 0 END) AS dislikes,
-    posts.created_at as created_at,
-    posts.updated_at as updated_at
-FROM 
-    posts
-INNER JOIN 
-    users ON posts.creator_id = users.id
-LEFT JOIN 
-    likes_dislikes ON posts.id = likes_dislikes.post_id
-GROUP BY 
-    posts.id, posts.content, posts.creator_id, users.name, posts.created_at, posts.updated_at;
-
-	
+		posts.id as id,
+		posts.content as content,
+		posts.creator_id as creator_id,
+		users.name as creator_name,
+		(SELECT COALESCE(SUM(like), 0) FROM likes_dislikes WHERE post_id = posts.id) AS likes,
+		(SELECT COALESCE(SUM(dislike), 0) FROM likes_dislikes WHERE post_id = posts.id) AS dislikes,
+		(SELECT COALESCE(COUNT(id), 0) FROM comments WHERE post_id = posts.id) AS comments,
+		posts.created_at as created_at,
+		posts.updated_at as updated_at
+	FROM 
+		posts
+	INNER JOIN 
+		users ON posts.creator_id = users.id;
         `;
 
 		const posts: Array<GetPosts> = await Db.connection.raw(query);

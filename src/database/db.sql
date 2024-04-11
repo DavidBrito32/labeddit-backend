@@ -35,6 +35,22 @@ CREATE TABLE IF NOT EXISTS comments(
 
 DROP table comments;
 
+SELECT
+    posts.id as id,
+    posts.content as content,
+    posts.creator_id as creator_id,
+    users.name as creator_name,
+    (SELECT COALESCE(SUM(like), 0) FROM likes_dislikes WHERE post_id = posts.id) AS likes,
+    (SELECT COALESCE(SUM(dislike), 0) FROM likes_dislikes WHERE post_id = posts.id) AS dislikes,
+    (SELECT COALESCE(COUNT(id), 0) FROM comments WHERE post_id = posts.id) AS comments,
+    posts.created_at as created_at,
+    posts.updated_at as updated_at
+FROM 
+    posts
+INNER JOIN 
+    users ON posts.creator_id = users.id;
+
+
 
 
 CREATE TABLE IF NOT EXISTS likes_dislikes_comment(
