@@ -35,7 +35,8 @@ export class UserBusiness {
 
 		const output: LoginOutputDTO = {
 			message: "Bem vindo de volta 😎🌻",
-			token
+			token,
+			user: checkUser.name
 		};
 
 		return output;
@@ -62,7 +63,8 @@ export class UserBusiness {
 
 		const output: LoginOutputDTO = {
 			message: "Seja bem vindo a Labeddit, publique posts incriveis! ✨🐱‍🏍",
-			token
+			token,
+			user: name
 		};
 
 		await this.userDB.insertUser(data);

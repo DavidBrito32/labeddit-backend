@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { PostBusiness } from "../business/PostBusiness";
 import { ZodError } from "zod";
 import { CustomError } from "../errors/CustomError";
-import { CommentInputDeleteSchema, CommentInputUpdateSchemaDTO, CreatePostSchemaDTO, DeletePostSchema, GetAllCommentsSchema, getPostsInputSchemaDTO, InputCommentSchema, LikeCommentSchema, LikePostSchema, UpdatePostInputSchemaDTO } from "../dto/PostsDTO";
+import { CheckLikeCommentInputSchema, CheckLikeInputSchema, CommentInputDeleteSchema, CommentInputUpdateSchemaDTO, CreatePostSchemaDTO, DeletePostSchema, GetAllCommentsSchema, getPostsByIdInputSchemaDTO, getPostsInputSchemaDTO, InputCommentSchema, LikeCommentSchema, LikePostSchema, UpdatePostInputSchemaDTO } from "../dto/PostsDTO";
 import { BadRequest } from "../errors/BadRequest";
 
 export class PostController {
@@ -14,6 +14,28 @@ export class PostController {
 		try{
 			const token = getPostsInputSchemaDTO.parse(req.headers);
 			const Posts = await this.postBusinnes.getPosts(token);
+			res.status(200).send(Posts);
+		}catch (err){
+			if(err instanceof ZodError){
+				res.status(400).send(err.issues);
+			}else if (err instanceof CustomError){
+				res.status(err.statusCode).send(err.message);
+			}else{
+				res.status(500).send(`Erro não tratado: DESC: ${err}`);
+			}
+		}
+	}; // OK ✔
+
+	public getAllPostById = async (req: Request, res: Response): Promise<void> => {
+		try{
+			if(req.params.id === ":id"){
+				throw new BadRequest("'id' - nao pode ser omitido");
+			}
+			const input = getPostsByIdInputSchemaDTO.parse({
+				idPost: req.params.id,
+				authorization: req.headers.authorization
+			});
+			const Posts = await this.postBusinnes.getPostById(input);
 			res.status(200).send(Posts);
 		}catch (err){
 			if(err instanceof ZodError){
@@ -130,6 +152,53 @@ export class PostController {
 			}
 		}
 	}; // OK ✔
+
+	public VerifyLike = async (req: Request, res: Response): Promise<void> => {
+		try{
+			if(req.params.id === ":id"){
+				throw new BadRequest("'id' - nao pode ser omitido");
+			}
+			const input = CheckLikeInputSchema.parse({
+				postId: req.params.id,
+				authorization: req.headers.authorization
+			});
+
+			const output = await this.postBusinnes.checkLike(input);
+			
+			res.status(200).send(output);
+		}catch (err){
+			if(err instanceof ZodError){
+				res.status(400).send(err.issues);
+			}else if (err instanceof CustomError){
+				res.status(err.statusCode).send(err.message);
+			}else{
+				res.status(500).send(`Erro não tratado: DESC: ${err}`);
+			}
+		}
+	};
+
+	public VerifyLikeInComment = async (req: Request, res: Response): Promise<void> => {
+		try{
+			if(req.params.id === ":id"){
+				throw new BadRequest("'id' - nao pode ser omitido");
+			}
+			const input = CheckLikeCommentInputSchema.parse({
+				commentId: req.params.id,
+				authorization: req.headers.authorization
+			});
+
+			const output = await this.postBusinnes.checkLikeComment(input);			
+			res.status(200).send(output);
+		}catch (err){
+			if(err instanceof ZodError){
+				res.status(400).send(err.issues);
+			}else if (err instanceof CustomError){
+				res.status(err.statusCode).send(err.message);
+			}else{
+				res.status(500).send(`Erro não tratado: DESC: ${err}`);
+			}
+		}
+	};
 
 	public createComment = async (req: Request, res: Response): Promise<void> => {
 		try{

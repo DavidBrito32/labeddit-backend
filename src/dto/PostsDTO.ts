@@ -20,6 +20,22 @@ export const getPostsInputSchemaDTO = z.object({
 	}).min(10)
 }).transform(data => data as getPostsInputDTO);
 
+export interface GetPostByIdInput {
+	idPost: string;
+	authorization: string;
+}
+
+export const getPostsByIdInputSchemaDTO = z.object({
+	idPost: z.string({
+		invalid_type_error: "'idPost' - deve ser enviado em formato string",
+		required_error: "'idPost' - é um dado obrigatorio"
+	}),
+	authorization: z.string({
+		invalid_type_error: "'token' - deve ser enviado em formato string",
+		required_error: "'token' - é um dado obrigatorio"
+	}).min(10)
+}).transform(data => data as GetPostByIdInput);
+
 export interface PostModelOutputDTO {
     id: string;
     content: string;
@@ -133,6 +149,45 @@ export const LikePostSchema = z.object({
 		required_error: "'authorization' - é um dado obrigatorio, não pode ser omitido"
 	})
 }).transform(data => data as LikePostInputDTO);
+
+
+export interface CheckLikeInput {
+	postId: string;
+	authorization: string;
+}
+export interface CheckLikeCommentInput {
+	commentId: string;
+	authorization: string;
+}
+
+export const CheckLikeInputSchema = z.object({
+	postId: z.string({
+		invalid_type_error: "'postId' - deve ser enviado no formado string",
+		required_error: "'postId' - e um dado obrigatorio"
+	}),
+	authorization: z.string({
+		invalid_type_error: "'authorization' - deve ser enviado no formato string",
+		required_error: "'authorization' - é um dado obrigatorio, não pode ser omitido"
+	})
+}).transform(data => data as CheckLikeInput);
+
+export const CheckLikeCommentInputSchema = z.object({
+	commentId: z.string({
+		invalid_type_error: "'postId' - deve ser enviado no formado string",
+		required_error: "'postId' - e um dado obrigatorio"
+	}),
+	authorization: z.string({
+		invalid_type_error: "'authorization' - deve ser enviado no formato string",
+		required_error: "'authorization' - é um dado obrigatorio, não pode ser omitido"
+	})
+}).transform(data => data as CheckLikeCommentInput);
+
+export interface CheckLikeOutput {
+	like: number;
+	dislike: number;
+}
+
+
 
 export interface LikePostOutputDTO {
     message: string;

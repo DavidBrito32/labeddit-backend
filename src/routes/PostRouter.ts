@@ -14,7 +14,11 @@ const Control = new PostController(
 
 Post.get("/", Control.getAllPosts);
 
+Post.get("/:id", Control.getAllPostById);
+
 Post.post("/", Control.createPost);
+
+Post.get("/:id/like", Control.VerifyLike);
 
 Post.post("/:id/like", Control.likePosts);
 
@@ -23,6 +27,8 @@ Post.post("/comments/:id", Control.createComment);
 Post.put("/comments/:id", Control.updateCommet);
 
 Post.delete("/comments/:id", Control.removeComment);
+
+Post.get("/comments/:id/like", Control.VerifyLikeInComment);
 
 Post.post("/comments/:id/like", Control.insertLikeInComment);
 

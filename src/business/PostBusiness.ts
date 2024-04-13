@@ -1,5 +1,5 @@
-import { CommentManager, FindCommentById, GetAllComments, InsertPosts, LikeCommentManager, LikeManager, PostDB, updateComment, UpdatePosts } from "../database/PostDB";
-import { CommentInputDeleteDTO, CommentInputUpdateDTO, CommentOutputDeleteDTO, CommentOutputUpdateDTO, CreatePostInputDTO, CreatePostsOutPutDTO, DeletePostsInputDTO, DeletePostsOutputDTO, GetAllCommentsInputDTO, GetCommentsOutPutDTO, getPostsInputDTO, InputCommentDTO, InputCommentOutputDTO, LikeCommentInputDTO, LikeCommentOutputDTO, LikePostInputDTO, LikePostOutputDTO, PostModelOutputDTO, UpdatePostInputDTO, UpdatePostOutputDTO } from "../dto/PostsDTO";
+import { CommentManager, FindCommentById, GetAllComments, GetLikes, InsertPosts, LikeComment, LikeCommentManager, LikeManager, PostDB, updateComment, UpdatePosts } from "../database/PostDB";
+import { CheckLikeCommentInput, CheckLikeInput, CheckLikeOutput, CommentInputDeleteDTO, CommentInputUpdateDTO, CommentOutputDeleteDTO, CommentOutputUpdateDTO, CreatePostInputDTO, CreatePostsOutPutDTO, DeletePostsInputDTO, DeletePostsOutputDTO, GetAllCommentsInputDTO, GetCommentsOutPutDTO, GetPostByIdInput, getPostsInputDTO, InputCommentDTO, InputCommentOutputDTO, LikeCommentInputDTO, LikeCommentOutputDTO, LikePostInputDTO, LikePostOutputDTO, PostModelOutputDTO, UpdatePostInputDTO, UpdatePostOutputDTO } from "../dto/PostsDTO";
 import { BadRequest } from "../errors/BadRequest";
 import { NotFound } from "../errors/NotFound";
 import { Comments } from "../models/PostCommentsModel";
@@ -24,6 +24,46 @@ export class PostBusiness {
 		const outPut: Array<PostModelOutputDTO> = posts.map(post => new Post(post.id, post.content, post.creator_id, post.creator_name, post.liked_as_user, post.comments ,post.created_at, post.updated_at ,post.likes, post.dislikes));
 		return outPut;
 	};
+
+	public getPostById = async (input: GetPostByIdInput): Promise<PostModelOutputDTO> => {
+		const { authorization, idPost } = input;
+		const verify = this.tokenManager.getPayload(authorization.split(" ")[1]);
+		if(verify === null){
+			throw new BadRequest("'authorization' - você não tem permissão para acessar este recurso! 🧤");
+		}
+
+		const [exists] = (await this.postDB.getAllPosts()).filter((item) => item.id === idPost);
+
+		if(!exists){
+			throw new BadRequest("'post' - nao encontrado")
+		}
+
+		const post = new Post(exists.id, exists.content, exists.creator_id, exists.creator_name, exists.liked_as_user, exists.comments, exists.created_at, exists.updated_at, exists.likes, exists.dislikes);
+		
+		return post.getPosts();
+	}
+
+	public checkLike = async (input: CheckLikeInput): Promise<GetLikes> => {
+		const { authorization, postId } = input;
+		const verify = this.tokenManager.getPayload(authorization.split(" ")[1]);
+		if(verify === null){
+			throw new BadRequest("'authorization' - você não tem permissão para acessar este recurso! 🧤");
+		}
+
+		const extists = await this.postDB.findLikeByPostIdAndUserId(postId, verify.id);
+		return extists;
+	}	
+
+	public checkLikeComment= async (input: CheckLikeCommentInput): Promise<LikeComment> => {
+		const { authorization, commentId } = input;
+		const verify = this.tokenManager.getPayload(authorization.split(" ")[1]);
+		if(verify === null){
+			throw new BadRequest("'authorization' - você não tem permissão para acessar este recurso! 🧤");
+		}
+
+		const extists = await this.postDB.findLikeByCommentIdAndUserId(commentId, verify.id);
+		return extists;
+	}	
 
 	public likePosts = async (input: LikePostInputDTO): Promise<LikePostOutputDTO> => {
 		const { authorization, like, postId }: LikePostInputDTO = input;
@@ -85,11 +125,43 @@ export class PostBusiness {
 			await this.postDB.updateLike(action);
 		}
 
+		if(likePost && likePost.like === 0 && likePost.dislike === 0 && like){
+			const action: LikeManager = {
+				creator_id: verify.id,
+				dislike: 0,
+				like: 1,
+				post_id: postId
+			};
+
+			await this.postDB.updateLike(action);
+		}
+
+		if(likePost && likePost.like === 0 && likePost.dislike === 1 && like){
+			const action: LikeManager = {
+				creator_id: verify.id,
+				dislike: 0,
+				like: 1,
+				post_id: postId
+			};
+
+			await this.postDB.updateLike(action);
+		}
+
+		if(likePost && likePost.like === 1 && likePost.dislike === 0 && !like){
+			const action: LikeManager = {
+				creator_id: verify.id,
+				dislike: 1,
+				like: 0,
+				post_id: postId
+			};
+			await this.postDB.updateLike(action);
+		}	
+
 		if(likePost && likePost.like === 0 && likePost.dislike === 1 && !like){
 			const action: LikeManager = {
 				creator_id: verify.id,
 				dislike: 0,
-				like: 0,
+				like: 1,
 				post_id: postId
 			};
 			await this.postDB.updateLike(action);

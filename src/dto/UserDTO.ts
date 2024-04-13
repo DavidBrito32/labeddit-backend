@@ -10,6 +10,7 @@ export interface UserModelOutPutDTO {
 export interface LoginOutputDTO {
     message: string;
     token: string;
+	user: string;
 }
 
 export interface LoginInputDTO {

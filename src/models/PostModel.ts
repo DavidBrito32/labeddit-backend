@@ -125,7 +125,7 @@ export class Post {
 			createdAt: this.getCreatedAt(),
 			comments: this.getComments(),
 			updatedAt: this.getUpdatedAt(),
-			creatorName: this.getCreatorName()
+			creatorName: this.getCreatorName(),
 		};
 	};
 }
