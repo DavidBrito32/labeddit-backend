@@ -1,16 +1,16 @@
-import z  from "zod";
+import z from "zod";
 
 export type Comments = {
-    creatorId: string;
-    creatorName: string;
-    comment: string;
-    createdAt: string;
+	creatorId: string;
+	creatorName: string;
+	comment: string;
+	createdAt: string;
 }
 
 
 //get posts DTO
 export interface getPostsInputDTO {
-    authorization: string;
+	authorization: string;
 }
 
 export const getPostsInputSchemaDTO = z.object({
@@ -37,23 +37,23 @@ export const getPostsByIdInputSchemaDTO = z.object({
 }).transform(data => data as GetPostByIdInput);
 
 export interface PostModelOutputDTO {
-    id: string;
-    content: string;
-    like: number;
-    dislike: number;
-    creatorId: string;
-    createdAt: string;
+	id: string;
+	content: string;
+	like: number;
+	dislike: number;
+	creatorId: string;
+	createdAt: string;
 	comments: number;
-    updatedAt: string | null;
-    creatorName: string;
+	updatedAt: string | null;
+	creatorName: string;
 }
 
 // ------------------------------------------------------------------------------------
 //INPUT DTO
 
-export interface CreatePostInputDTO  {
-    authorization: string;
-    content: string;
+export interface CreatePostInputDTO {
+	authorization: string;
+	content: string;
 }
 
 export const CreatePostSchemaDTO = z.object({
@@ -68,7 +68,7 @@ export const CreatePostSchemaDTO = z.object({
 }).transform(data => data as CreatePostInputDTO);
 
 export interface CreatePostsOutPutDTO {
-    message: string;
+	message: string;
 }
 
 
@@ -77,9 +77,9 @@ export interface CreatePostsOutPutDTO {
 //UPDATE
 
 export interface UpdatePostInputDTO {
-    idPost: string;
-    content?: string;
-    authorization: string;
+	idPost: string;
+	content?: string;
+	authorization: string;
 }
 
 export const UpdatePostInputSchemaDTO = z.object({
@@ -97,7 +97,7 @@ export const UpdatePostInputSchemaDTO = z.object({
 }).transform(data => data as UpdatePostInputDTO);
 
 export interface UpdatePostOutputDTO {
-    message: string;
+	message: string;
 }
 
 
@@ -106,8 +106,8 @@ export interface UpdatePostOutputDTO {
 //DELETE
 
 export interface DeletePostsInputDTO {
-    id: string;
-    authorization: string;
+	id: string;
+	authorization: string;
 }
 
 export const DeletePostSchema = z.object({
@@ -122,7 +122,7 @@ export const DeletePostSchema = z.object({
 }).transform(data => data as DeletePostsInputDTO);
 
 export interface DeletePostsOutputDTO {
-    message: string;
+	message: string;
 }
 
 // ------------------------------------------------------------------------------------
@@ -130,9 +130,9 @@ export interface DeletePostsOutputDTO {
 // LIKE
 
 export interface LikePostInputDTO {
-    like: boolean;
-    postId: string;
-    authorization: string;
+	like: boolean;
+	postId: string;
+	authorization: string;
 }
 
 export const LikePostSchema = z.object({
@@ -190,7 +190,7 @@ export interface CheckLikeOutput {
 
 
 export interface LikePostOutputDTO {
-    message: string;
+	message: string;
 }
 
 //------------------------------------------------------------------------------------

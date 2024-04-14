@@ -1,21 +1,21 @@
 import z from "zod";
 
 export interface UserModelOutPutDTO {
-    name: string,
-    email: string,
-    password: string,
+	name: string,
+	email: string,
+	password: string,
 	id: string;
 }
 
 export interface LoginOutputDTO {
-    message: string;
-    token: string;
+	message: string;
+	token: string;
 	user: string;
 }
 
 export interface LoginInputDTO {
-    email: string;
-    password: string;
+	email: string;
+	password: string;
 }
 
 export const LoginInputSchema = z.object({

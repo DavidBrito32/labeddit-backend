@@ -9,101 +9,101 @@ import { IdGenerator } from "../services/uuid";
 
 export class PostBusiness {
 	constructor(
-        public postDB: PostDB,
+		public postDB: PostDB,
 		public idGenerator: IdGenerator,
 		public tokenManager: TokenManager
-	){}    
+	) { }
 
-	public getPosts = async (input: getPostsInputDTO): Promise<Array<PostModelOutputDTO>> => {		
-		const verifyToken = this.tokenManager.getPayload(input.authorization.split(" ")[1]);	
-		if(verifyToken === null){
+	public getPosts = async (input: getPostsInputDTO): Promise<Array<PostModelOutputDTO>> => {
+		const verifyToken = this.tokenManager.getPayload(input.authorization.split(" ")[1]);
+		if (verifyToken === null) {
 			throw new BadRequest("Você não tem permissão para acessar este recurso");
 		}
-		
+
 		const posts = await this.postDB.getAllPosts();
-		const outPut: Array<PostModelOutputDTO> = posts.map(post => new Post(post.id, post.content, post.creator_id, post.creator_name, post.liked_as_user, post.comments ,post.created_at, post.updated_at ,post.likes, post.dislikes));
+		const outPut: Array<PostModelOutputDTO> = posts.map(post => new Post(post.id, post.content, post.creator_id, post.creator_name, post.liked_as_user, post.comments, post.created_at, post.updated_at, post.likes, post.dislikes));
 		return outPut;
 	};
 
 	public getPostById = async (input: GetPostByIdInput): Promise<PostModelOutputDTO> => {
 		const { authorization, idPost } = input;
 		const verify = this.tokenManager.getPayload(authorization.split(" ")[1]);
-		if(verify === null){
+		if (verify === null) {
 			throw new BadRequest("'authorization' - você não tem permissão para acessar este recurso! 🧤");
 		}
 
 		const [exists] = (await this.postDB.getAllPosts()).filter((item) => item.id === idPost);
 
-		if(!exists){
+		if (!exists) {
 			throw new BadRequest("'post' - nao encontrado")
 		}
 
 		const post = new Post(exists.id, exists.content, exists.creator_id, exists.creator_name, exists.liked_as_user, exists.comments, exists.created_at, exists.updated_at, exists.likes, exists.dislikes);
-		
+
 		return post.getPosts();
 	}
 
 	public checkLike = async (input: CheckLikeInput): Promise<GetLikes> => {
 		const { authorization, postId } = input;
 		const verify = this.tokenManager.getPayload(authorization.split(" ")[1]);
-		if(verify === null){
+		if (verify === null) {
 			throw new BadRequest("'authorization' - você não tem permissão para acessar este recurso! 🧤");
 		}
 
 		const extists = await this.postDB.findLikeByPostIdAndUserId(postId, verify.id);
 		return extists;
-	}	
+	}
 
-	public checkLikeComment= async (input: CheckLikeCommentInput): Promise<LikeComment> => {
+	public checkLikeComment = async (input: CheckLikeCommentInput): Promise<LikeComment> => {
 		const { authorization, commentId } = input;
 		const verify = this.tokenManager.getPayload(authorization.split(" ")[1]);
-		if(verify === null){
+		if (verify === null) {
 			throw new BadRequest("'authorization' - você não tem permissão para acessar este recurso! 🧤");
 		}
 
 		const extists = await this.postDB.findLikeByCommentIdAndUserId(commentId, verify.id);
 		return extists;
-	}	
+	}
 
 	public likePosts = async (input: LikePostInputDTO): Promise<LikePostOutputDTO> => {
 		const { authorization, like, postId }: LikePostInputDTO = input;
 		const verify = this.tokenManager.getPayload(authorization.split(" ")[1]);
-		if(verify === null){
+		if (verify === null) {
 			throw new BadRequest("'authorization' - você não tem permissão para acessar este recurso! 🧤");
 		}
 
 		const finder = await this.postDB.getAllPosts();
 		const exists = finder.find((item) => item.id === postId);
 
-		
-		if(!exists){
+
+		if (!exists) {
 			throw new NotFound("Desculpe, Post não encontrado! 🙅‍♂️");
 		}
 		const likePost = await this.postDB.findLikeByPostIdAndUserId(exists.id, verify.id);
 
-		if(!likePost  && like){
+		if (!likePost && like) {
 			const action: LikeManager = {
 				creator_id: verify.id,
 				dislike: 0,
 				like: 1,
-				post_id: postId
-			};			
-
-			await this.postDB.insertLike(action);
-		}
-
-		if(!likePost  && !like){
-			const action: LikeManager = {
-				creator_id: verify.id,
-				dislike: 1,
-				like: 0,
 				post_id: postId
 			};
 
 			await this.postDB.insertLike(action);
 		}
 
-		if(likePost && likePost.like === 0 && likePost.dislike === 0  && !like){
+		if (!likePost && !like) {
+			const action: LikeManager = {
+				creator_id: verify.id,
+				dislike: 1,
+				like: 0,
+				post_id: postId
+			};
+
+			await this.postDB.insertLike(action);
+		}
+
+		if (likePost && likePost.like === 0 && likePost.dislike === 0 && !like) {
 			const action: LikeManager = {
 				creator_id: verify.id,
 				dislike: 1,
@@ -114,7 +114,7 @@ export class PostBusiness {
 			await this.postDB.updateLike(action);
 		}
 
-		if(likePost && likePost.like === 1 && likePost.dislike === 0 && like){
+		if (likePost && likePost.like === 1 && likePost.dislike === 0 && like) {
 			const action: LikeManager = {
 				creator_id: verify.id,
 				dislike: 0,
@@ -125,7 +125,7 @@ export class PostBusiness {
 			await this.postDB.updateLike(action);
 		}
 
-		if(likePost && likePost.like === 0 && likePost.dislike === 0 && like){
+		if (likePost && likePost.like === 0 && likePost.dislike === 0 && like) {
 			const action: LikeManager = {
 				creator_id: verify.id,
 				dislike: 0,
@@ -136,7 +136,7 @@ export class PostBusiness {
 			await this.postDB.updateLike(action);
 		}
 
-		if(likePost && likePost.like === 0 && likePost.dislike === 1 && like){
+		if (likePost && likePost.like === 0 && likePost.dislike === 1 && like) {
 			const action: LikeManager = {
 				creator_id: verify.id,
 				dislike: 0,
@@ -147,7 +147,7 @@ export class PostBusiness {
 			await this.postDB.updateLike(action);
 		}
 
-		if(likePost && likePost.like === 1 && likePost.dislike === 0 && !like){
+		if (likePost && likePost.like === 1 && likePost.dislike === 0 && !like) {
 			const action: LikeManager = {
 				creator_id: verify.id,
 				dislike: 1,
@@ -155,9 +155,9 @@ export class PostBusiness {
 				post_id: postId
 			};
 			await this.postDB.updateLike(action);
-		}	
+		}
 
-		if(likePost && likePost.like === 0 && likePost.dislike === 1 && !like){
+		if (likePost && likePost.like === 0 && likePost.dislike === 1 && !like) {
 			const action: LikeManager = {
 				creator_id: verify.id,
 				dislike: 0,
@@ -165,7 +165,7 @@ export class PostBusiness {
 				post_id: postId
 			};
 			await this.postDB.updateLike(action);
-		}		
+		}
 
 		return {
 			message: "ação Realizada com sucesso! ✔✨"
@@ -174,9 +174,9 @@ export class PostBusiness {
 
 	public createPost = async (input: CreatePostInputDTO): Promise<CreatePostsOutPutDTO> => {
 		const { content, authorization } = input;
-		const verifyToken = this.tokenManager.getPayload(authorization.split(" ")[1]);	
+		const verifyToken = this.tokenManager.getPayload(authorization.split(" ")[1]);
 
-		if(verifyToken === null){
+		if (verifyToken === null) {
 			throw new BadRequest("Você não tem permissão para acessar este recurso");
 		}
 
@@ -200,25 +200,25 @@ export class PostBusiness {
 	public editPost = async (input: UpdatePostInputDTO): Promise<UpdatePostOutputDTO> => {
 		const { authorization, idPost, content } = input;
 		const verifyToken = this.tokenManager.getPayload(authorization.split(" ")[1]);
-		if(verifyToken === null){
+		if (verifyToken === null) {
 			throw new BadRequest("Você não tem permissão para acessar este recurso");
 		}
-		
+
 		const exists = await this.postDB.findPostsById(idPost);
 
-		if(!exists){
+		if (!exists) {
 			throw new NotFound("Desculpe, Post não encontrado! 🙅‍♂️");
 		}
 
-		if(verifyToken.id !== exists.creator_id){
+		if (verifyToken.id !== exists.creator_id) {
 			throw new BadRequest("não pode editar o post de outro usuario");
 		}
-		
+
 		const inputEdit: UpdatePosts = {
 			content: content || exists.content,
 			creator_id: verifyToken.id,
 			updated_at: new Date().toISOString(),
-			idPost			
+			idPost
 		};
 
 		await this.postDB.updatePost(inputEdit);
@@ -231,17 +231,17 @@ export class PostBusiness {
 	public deletePost = async (input: DeletePostsInputDTO): Promise<DeletePostsOutputDTO> => {
 		const { id, authorization }: DeletePostsInputDTO = input;
 		const verify = this.tokenManager.getPayload(authorization.split(" ")[1]);
-		
-		if(verify === null){
+
+		if (verify === null) {
 			throw new BadRequest("'authorization' - não foi possivel validar sua identidade");
 		}
 		const exists = await this.postDB.findPostsById(id);
 
-		if(!exists){
+		if (!exists) {
 			throw new BadRequest("Desculpe, Post não encontrado! 🙅‍♂️");
 		}
 
-		if(exists.creator_id !== verify.id){
+		if (exists.creator_id !== verify.id) {
 			throw new BadRequest("Não é possivel deletar um post de outro usuario");
 		}
 
@@ -259,8 +259,8 @@ export class PostBusiness {
 		const { authorization, idPost }: GetAllCommentsInputDTO = input;
 
 		const verify = this.tokenManager.getPayload(authorization.split(" ")[1]);
-		
-		if(verify === null){
+
+		if (verify === null) {
 			throw new BadRequest("'authorization' - não foi possivel validar sua identidade");
 		}
 
@@ -268,21 +268,21 @@ export class PostBusiness {
 
 		const output = CommentsByPost.map(item => new Comments(item.id, item.creator_id, item.creator_name, item.comment, item.post_id, item.post_content, item.created_at, item.updated_at, item.likes, item.dislikes).getCommentModel());
 
-		
+
 		return output;
 	};
 
 	public createCommentInPost = async (input: InputCommentDTO): Promise<InputCommentOutputDTO> => {
 		const { authorization, id, comment }: InputCommentDTO = input;
 		const verify = this.tokenManager.getPayload(authorization.split(" ")[1]);
-		
-		if(verify === null){
+
+		if (verify === null) {
 			throw new BadRequest("'authorization' - não foi possivel validar sua identidade");
 		}
 
 		const PostExists = await this.postDB.findPostsById(id);
-		
-		if(!PostExists){
+
+		if (!PostExists) {
 			throw new NotFound("Desculpe, Post não encontrado! 🙅‍♂️");
 		}
 
@@ -306,18 +306,18 @@ export class PostBusiness {
 	public updateComment = async (input: CommentInputUpdateDTO): Promise<CommentOutputUpdateDTO> => {
 		const { authorization, comment, id } = input;
 		const verify = this.tokenManager.getPayload(authorization.split(" ")[1]);
-		
-		if(verify === null){
+
+		if (verify === null) {
 			throw new BadRequest("'authorization' - não foi possivel validar sua identidade");
 		}
 
 		const exists: FindCommentById = await this.postDB.findCommentById(id);
 
-		if(!exists){
+		if (!exists) {
 			throw new BadRequest("Desculpe, Comentario não encontrado! 🙅‍♂️");
 		}
 
-		if(exists.creator_id !== verify.id){
+		if (exists.creator_id !== verify.id) {
 			throw new BadRequest("Voce nao pode editar um comentario de outro usuario");
 		}
 
@@ -333,24 +333,24 @@ export class PostBusiness {
 			message: "Comentario editado com sucesso!"
 		};
 
-	} 
+	}
 
 	public deleteComment = async (input: CommentInputDeleteDTO): Promise<CommentOutputDeleteDTO> => {
 		const { authorization, id }: CommentInputDeleteDTO = input;
 
 		const verify = this.tokenManager.getPayload(authorization.split(" ")[1]);
-		
-		if(verify === null){
+
+		if (verify === null) {
 			throw new BadRequest("'authorization' - não foi possivel validar sua identidade");
 		}
 
 		const comment: FindCommentById = await this.postDB.findCommentById(id);
 
-		if(!comment){
+		if (!comment) {
 			throw new BadRequest("Desculpe, Comentario não encontrado! 🙅‍♂️");
 		}
 
-		if(comment.creator_id !== verify.id){
+		if (comment.creator_id !== verify.id) {
 			throw new BadRequest("Não pode apagar o comentario de outra pessoa");
 		}
 
@@ -366,20 +366,20 @@ export class PostBusiness {
 	public insertLikeComment = async (input: LikeCommentInputDTO): Promise<LikeCommentOutputDTO> => {
 		const { authorization, idComment, like }: LikeCommentInputDTO = input;
 		const verify = this.tokenManager.getPayload(authorization.split(" ")[1]);
-		
-		if(verify === null){
+
+		if (verify === null) {
 			throw new BadRequest("'authorization' - não foi possivel validar sua identidade");
 		}
 
 		const comment = await this.postDB.findCommentById(idComment);
-		if(!comment){
+		if (!comment) {
 			throw new NotFound("Desculpe, Comentario não encontrado! 🙅‍♂️");
 		}
 
-		const likedUser = await this.postDB.findLikeByCommentIdAndUserId(idComment, verify.id);		
+		const likedUser = await this.postDB.findLikeByCommentIdAndUserId(idComment, verify.id);
 
 		//LIKE ACTIONS
-		if(!likedUser  && like ){
+		if (!likedUser && like) {
 			const action: LikeCommentManager = {
 				comment_id: comment.id,
 				creator_id: verify.id,
@@ -390,7 +390,7 @@ export class PostBusiness {
 			await this.postDB.insertLikeComment(action);
 		} // OK ✅ CASO O USUARIO NÃO TENHA DADO LIKE E NEM DISLIKE -> DEU LIKE AQUI -> FUNCIONAL
 
-		if(likedUser && likedUser.like === 0 && likedUser.dislike === 0 && like){
+		if (likedUser && likedUser.like === 0 && likedUser.dislike === 0 && like) {
 			const action: LikeCommentManager = {
 				comment_id: comment.id,
 				creator_id: verify.id,
@@ -401,7 +401,7 @@ export class PostBusiness {
 			await this.postDB.updateLikeComment(action);
 		} // OK ✅ CASO O USUARIO JA TENHA DADO LIKE -> REMOVE O LIKE AQUI -> FUNCIONAL
 
-		if(likedUser && likedUser.like === 1 && likedUser.dislike === 0 && like){
+		if (likedUser && likedUser.like === 1 && likedUser.dislike === 0 && like) {
 			const action: LikeCommentManager = {
 				comment_id: comment.id,
 				creator_id: verify.id,
@@ -414,7 +414,7 @@ export class PostBusiness {
 
 		//---------------------------------------------------
 		//DISLIKE ACTIONS
-		if(!likedUser  && !like ){
+		if (!likedUser && !like) {
 			const action: LikeCommentManager = {
 				comment_id: idComment,
 				creator_id: verify.id,
@@ -425,7 +425,7 @@ export class PostBusiness {
 			await this.postDB.insertLikeComment(action);
 		} // OK ✅ CASO O USUARIO NÃO TENHA DADO LIKE E NEM DISLIKE -> DEU DISLIKELIKE AQUI -> FUNCIONAL
 
-		if(likedUser && likedUser.like === 0 && likedUser.dislike === 0 && !like ){
+		if (likedUser && likedUser.like === 0 && likedUser.dislike === 0 && !like) {
 			const action: LikeCommentManager = {
 				comment_id: comment.id,
 				creator_id: verify.id,
@@ -435,7 +435,7 @@ export class PostBusiness {
 			await this.postDB.updateLikeComment(action);
 		} // OK ✅ CASO O USUARIO JA TENHA DADO LIKE OU NEM DISLIKE -> DEU DISLIKELIKE AQUI
 
-		if(likedUser && likedUser.like === 0  && !like ){
+		if (likedUser && likedUser.like === 0 && !like) {
 			const action: LikeCommentManager = {
 				comment_id: comment.id,
 				creator_id: verify.id,
@@ -446,7 +446,7 @@ export class PostBusiness {
 			await this.postDB.updateLikeComment(action);
 		} // OK ✅ CASO O USUARIO JA TENHA DADO LIKE OU DISLIKE -> DEU DISLIKELIKE AQUI -> FUNCIONAL
 
-		if(likedUser && likedUser.like === 0 && likedUser.dislike === 1 && !like){
+		if (likedUser && likedUser.like === 0 && likedUser.dislike === 1 && !like) {
 			const action: LikeCommentManager = {
 				comment_id: comment.id,
 				creator_id: verify.id,
@@ -457,7 +457,7 @@ export class PostBusiness {
 			await this.postDB.updateLikeComment(action);
 		} // OK ✅ CASO O USUARIO JA TENHA DADO DISLIKE -> REMOVE O DISLIKE AQUI -> FUNCIONAL
 
-		if(likedUser && likedUser.like === 1 && likedUser.dislike === 0 && !like){
+		if (likedUser && likedUser.like === 1 && likedUser.dislike === 0 && !like) {
 			const action: LikeCommentManager = {
 				comment_id: comment.id,
 				creator_id: verify.id,

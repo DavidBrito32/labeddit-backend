@@ -17,12 +17,12 @@ export class Post {
 		creatorId: string,
 		creatorName: string,
 		likedAsUser: string | null,
-		comments:number,
+		comments: number,
 		createdAt: string,
 		updatedAt: string | null,
 		like: number,
 		dislike: number
-	){
+	) {
 		this.id = id;
 		this.content = content;
 		this.creatorId = creatorId;

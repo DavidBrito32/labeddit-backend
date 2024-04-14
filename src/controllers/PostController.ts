@@ -7,28 +7,28 @@ import { BadRequest } from "../errors/BadRequest";
 
 export class PostController {
 	constructor(
-        public postBusinnes: PostBusiness
-	){}
+		public postBusinnes: PostBusiness
+	) { }
 
 	public getAllPosts = async (req: Request, res: Response): Promise<void> => {
-		try{
+		try {
 			const token = getPostsInputSchemaDTO.parse(req.headers);
 			const Posts = await this.postBusinnes.getPosts(token);
 			res.status(200).send(Posts);
-		}catch (err){
-			if(err instanceof ZodError){
+		} catch (err) {
+			if (err instanceof ZodError) {
 				res.status(400).send(err.issues);
-			}else if (err instanceof CustomError){
+			} else if (err instanceof CustomError) {
 				res.status(err.statusCode).send(err.message);
-			}else{
+			} else {
 				res.status(500).send(`Erro não tratado: DESC: ${err}`);
 			}
 		}
 	}; // OK ✔
 
 	public getAllPostById = async (req: Request, res: Response): Promise<void> => {
-		try{
-			if(req.params.id === ":id"){
+		try {
+			if (req.params.id === ":id") {
 				throw new BadRequest("'id' - nao pode ser omitido");
 			}
 			const input = getPostsByIdInputSchemaDTO.parse({
@@ -37,19 +37,19 @@ export class PostController {
 			});
 			const Posts = await this.postBusinnes.getPostById(input);
 			res.status(200).send(Posts);
-		}catch (err){
-			if(err instanceof ZodError){
+		} catch (err) {
+			if (err instanceof ZodError) {
 				res.status(400).send(err.issues);
-			}else if (err instanceof CustomError){
+			} else if (err instanceof CustomError) {
 				res.status(err.statusCode).send(err.message);
-			}else{
+			} else {
 				res.status(500).send(`Erro não tratado: DESC: ${err}`);
 			}
 		}
 	}; // OK ✔
 
 	public likePosts = async (req: Request, res: Response): Promise<void> => {
-		try{
+		try {
 			const input = LikePostSchema.parse({
 				like: req.body.like,
 				postId: req.params.id,
@@ -58,19 +58,19 @@ export class PostController {
 
 			const output = await this.postBusinnes.likePosts(input);
 			res.status(201).send(output);
-		}catch (err){
-			if(err instanceof ZodError){
+		} catch (err) {
+			if (err instanceof ZodError) {
 				res.status(400).send(err.issues);
-			}else if (err instanceof CustomError){
+			} else if (err instanceof CustomError) {
 				res.status(err.statusCode).send(err.message);
-			}else{
+			} else {
 				res.status(500).send(`Erro não tratado: DESC: ${err}`);
 			}
 		}
 	}; // OK ✔
 
 	public createPost = async (req: Request, res: Response): Promise<void> => {
-		try{
+		try {
 			const input = CreatePostSchemaDTO.parse({
 				authorization: req.headers.authorization,
 				content: req.body.content,
@@ -79,19 +79,19 @@ export class PostController {
 
 			const post = await this.postBusinnes.createPost(input);
 			res.status(201).send(post);
-		}catch (err){
-			if(err instanceof ZodError){
+		} catch (err) {
+			if (err instanceof ZodError) {
 				res.status(400).send(err.issues);
-			}else if (err instanceof CustomError){
+			} else if (err instanceof CustomError) {
 				res.status(err.statusCode).send(err.message);
-			}else{
+			} else {
 				res.status(500).send(`Erro não tratado: DESC: ${err}`);
 			}
 		}
 	}; // OK ✔
 
 	public editPost = async (req: Request, res: Response): Promise<void> => {
-		try{
+		try {
 			const input = UpdatePostInputSchemaDTO.parse({
 				authorization: req.headers.authorization,
 				content: req.body.content,
@@ -102,19 +102,19 @@ export class PostController {
 			const post = await this.postBusinnes.editPost(input);
 			res.status(200).send(post);
 
-		}catch (err){
-			if(err instanceof ZodError){
+		} catch (err) {
+			if (err instanceof ZodError) {
 				res.status(400).send(err.issues);
-			}else if (err instanceof CustomError){
+			} else if (err instanceof CustomError) {
 				res.status(err.statusCode).send(err.message);
-			}else{
+			} else {
 				res.status(500).send(`Erro não tratado: DESC: ${err}`);
 			}
 		}
 	}; // OK ✔
 
 	public deletePost = async (req: Request, res: Response): Promise<void> => {
-		try{
+		try {
 			const input = DeletePostSchema.parse({
 				id: req.params.id,
 				authorization: req.headers.authorization,
@@ -122,19 +122,19 @@ export class PostController {
 
 			const post = await this.postBusinnes.deletePost(input);
 			res.status(200).send(post);
-		}catch (err){
-			if(err instanceof ZodError){
+		} catch (err) {
+			if (err instanceof ZodError) {
 				res.status(400).send(err.issues);
-			}else if (err instanceof CustomError){
+			} else if (err instanceof CustomError) {
 				res.status(err.statusCode).send(err.message);
-			}else{
+			} else {
 				res.status(500).send(`Erro não tratado: DESC: ${err}`);
 			}
 		}
 	}; // OK ✔
 
 	public GetAllComments = async (req: Request, res: Response): Promise<void> => {
-		try{
+		try {
 			const input = GetAllCommentsSchema.parse({
 				idPost: req.params.id,
 				authorization: req.headers.authorization
@@ -142,20 +142,20 @@ export class PostController {
 
 			const output = await this.postBusinnes.getAllCommentsPostsById(input);
 			res.status(200).send(output);
-		}catch (err){
-			if(err instanceof ZodError){
+		} catch (err) {
+			if (err instanceof ZodError) {
 				res.status(400).send(err.issues);
-			}else if (err instanceof CustomError){
+			} else if (err instanceof CustomError) {
 				res.status(err.statusCode).send(err.message);
-			}else{
+			} else {
 				res.status(500).send(`Erro não tratado: DESC: ${err}`);
 			}
 		}
 	}; // OK ✔
 
 	public VerifyLike = async (req: Request, res: Response): Promise<void> => {
-		try{
-			if(req.params.id === ":id"){
+		try {
+			if (req.params.id === ":id") {
 				throw new BadRequest("'id' - nao pode ser omitido");
 			}
 			const input = CheckLikeInputSchema.parse({
@@ -164,22 +164,22 @@ export class PostController {
 			});
 
 			const output = await this.postBusinnes.checkLike(input);
-			
+
 			res.status(200).send(output);
-		}catch (err){
-			if(err instanceof ZodError){
+		} catch (err) {
+			if (err instanceof ZodError) {
 				res.status(400).send(err.issues);
-			}else if (err instanceof CustomError){
+			} else if (err instanceof CustomError) {
 				res.status(err.statusCode).send(err.message);
-			}else{
+			} else {
 				res.status(500).send(`Erro não tratado: DESC: ${err}`);
 			}
 		}
 	};
 
 	public VerifyLikeInComment = async (req: Request, res: Response): Promise<void> => {
-		try{
-			if(req.params.id === ":id"){
+		try {
+			if (req.params.id === ":id") {
 				throw new BadRequest("'id' - nao pode ser omitido");
 			}
 			const input = CheckLikeCommentInputSchema.parse({
@@ -187,22 +187,22 @@ export class PostController {
 				authorization: req.headers.authorization
 			});
 
-			const output = await this.postBusinnes.checkLikeComment(input);			
+			const output = await this.postBusinnes.checkLikeComment(input);
 			res.status(200).send(output);
-		}catch (err){
-			if(err instanceof ZodError){
+		} catch (err) {
+			if (err instanceof ZodError) {
 				res.status(400).send(err.issues);
-			}else if (err instanceof CustomError){
+			} else if (err instanceof CustomError) {
 				res.status(err.statusCode).send(err.message);
-			}else{
+			} else {
 				res.status(500).send(`Erro não tratado: DESC: ${err}`);
 			}
 		}
 	};
 
 	public createComment = async (req: Request, res: Response): Promise<void> => {
-		try{
-			if(req.params.id === ":id"){
+		try {
+			if (req.params.id === ":id") {
 				throw new BadRequest("'id' - nao pode ser omitido");
 			}
 			const input = InputCommentSchema.parse({
@@ -213,20 +213,20 @@ export class PostController {
 
 			const output = await this.postBusinnes.createCommentInPost(input);
 			res.status(201).send(output);
-		}catch (err){
-			if(err instanceof ZodError){
+		} catch (err) {
+			if (err instanceof ZodError) {
 				res.status(400).send(err.issues);
-			}else if (err instanceof CustomError){
+			} else if (err instanceof CustomError) {
 				res.status(err.statusCode).send(err.message);
-			}else{
+			} else {
 				res.status(500).send(`Erro não tratado: DESC: ${err}`);
 			}
 		}
 	}; // OK ✔
 
 	public updateCommet = async (req: Request, res: Response): Promise<void> => {
-		try{
-			if(req.params.id === ":id"){
+		try {
+			if (req.params.id === ":id") {
 				throw new BadRequest("'id' - nao pode ser omitido");
 			}
 			const input = CommentInputUpdateSchemaDTO.parse({
@@ -238,19 +238,19 @@ export class PostController {
 			const output = await this.postBusinnes.updateComment(input);
 
 			res.status(200).send(output);
-		}catch (err){
-			if(err instanceof ZodError){
+		} catch (err) {
+			if (err instanceof ZodError) {
 				res.status(400).send(err.issues);
-			}else if (err instanceof CustomError){
+			} else if (err instanceof CustomError) {
 				res.status(err.statusCode).send(err.message);
-			}else{
+			} else {
 				res.status(500).send(`Erro não tratado: DESC: ${err}`);
 			}
 		}
 	} // OK ✔
 
 	public insertLikeInComment = async (req: Request, res: Response): Promise<void> => {
-		try{
+		try {
 			const input = LikeCommentSchema.parse({
 				authorization: req.headers.authorization,
 				idComment: req.params.id,
@@ -259,19 +259,19 @@ export class PostController {
 
 			const output = await this.postBusinnes.insertLikeComment(input);
 			res.status(201).send(output);
-		}catch (err){
-			if(err instanceof ZodError){
+		} catch (err) {
+			if (err instanceof ZodError) {
 				res.status(400).send(err.issues);
-			}else if (err instanceof CustomError){
+			} else if (err instanceof CustomError) {
 				res.status(err.statusCode).send(err.message);
-			}else{
+			} else {
 				res.status(500).send(`Erro não tratado: DESC: ${err}`);
 			}
 		}
 	}; // OK ✔
 
 	public removeComment = async (req: Request, res: Response): Promise<void> => {
-		try{
+		try {
 			const input = CommentInputDeleteSchema.parse({
 				authorization: req.headers.authorization,
 				id: req.params.id
@@ -280,12 +280,12 @@ export class PostController {
 			const output = await this.postBusinnes.deleteComment(input);
 			res.status(200).send(output);
 
-		}catch (err){
-			if(err instanceof ZodError){
+		} catch (err) {
+			if (err instanceof ZodError) {
 				res.status(400).send(err.issues);
-			}else if (err instanceof CustomError){
+			} else if (err instanceof CustomError) {
 				res.status(err.statusCode).send(err.message);
-			}else{
+			} else {
 				res.status(500).send(`Erro não tratado: DESC: ${err}`);
 			}
 		}

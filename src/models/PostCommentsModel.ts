@@ -23,7 +23,7 @@ export class Comments {
 		updatedAt: string | null,
 		like: number,
 		dislike: number
-	){
+	) {
 		this.id = id;
 		this.creatorId = creatorId;
 		this.creatorName = creatorName;

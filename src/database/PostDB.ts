@@ -1,66 +1,66 @@
 import { Db } from "./db";
 
 export interface GetPosts {
-  id: string;
-  content: string;
-  creator_id: string;
-  liked_as_user: string | null;
-  like_as_creator_id: string | null;
-  creator_name: string;
-  likes: number;
-  dislikes: number;
-  comments: number;
-  created_at: string;
-  updated_at: string;
+	id: string;
+	content: string;
+	creator_id: string;
+	liked_as_user: string | null;
+	like_as_creator_id: string | null;
+	creator_name: string;
+	likes: number;
+	dislikes: number;
+	comments: number;
+	created_at: string;
+	updated_at: string;
 }
 
 export interface InsertPosts {
-  id: string;
-  content: string;
-  creator_id: string;
-  created_at: string;
+	id: string;
+	content: string;
+	creator_id: string;
+	created_at: string;
 }
 
 export interface UpdatePosts {
-  idPost: string;
-  content: string;
-  creator_id: string;
-  updated_at: string;
+	idPost: string;
+	content: string;
+	creator_id: string;
+	updated_at: string;
 }
 
 export interface LikeManager {
-  creator_id: string;
-  post_id: string;
-  like: number;
-  dislike: number;
+	creator_id: string;
+	post_id: string;
+	like: number;
+	dislike: number;
 }
 
 export interface CommentManager {
-  id: string;
-  creator_id: string;
-  post_id: string;
-  comment: string;
-  created_at: string;
+	id: string;
+	creator_id: string;
+	post_id: string;
+	comment: string;
+	created_at: string;
 }
 
 export interface LikeCommentManager {
-  creator_id: string;
-  comment_id: string;
-  like: number;
-  dislike: number;
+	creator_id: string;
+	comment_id: string;
+	like: number;
+	dislike: number;
 }
 
 export interface GetAllComments {
-  id: string;
-  creator_id: string;
-  comment: string;
-  post_id: string;
-  post_content: string;
-  creator_name: string;
-  created_at: string;
-  updated_at: string | null;
-  likes: number;
-  dislikes: number;
+	id: string;
+	creator_id: string;
+	comment: string;
+	post_id: string;
+	post_content: string;
+	creator_name: string;
+	created_at: string;
+	updated_at: string | null;
+	likes: number;
+	dislikes: number;
 }
 
 export interface FindCommentById {
@@ -134,7 +134,7 @@ export class PostDB extends Db {
 	};
 
 	public findLikeByPostIdAndUserId = async (postId: string, userId: string): Promise<GetLikes> => {
-		const [like]: Array<GetLikes> = await Db.connection("likes_dislikes").where({creator_id: userId, post_id: postId});
+		const [like]: Array<GetLikes> = await Db.connection("likes_dislikes").where({ creator_id: userId, post_id: postId });
 
 		return like;
 	};
@@ -181,7 +181,7 @@ export class PostDB extends Db {
 	public deletePost = async (id: string): Promise<void> => {
 		await Db.connection("posts").delete().where({ id });
 	};
-	
+
 	public getAllCommentById = async (
 		id: string
 	): Promise<Array<GetAllComments>> => {
@@ -239,7 +239,7 @@ export class PostDB extends Db {
 	GROUP BY
 		comments.id;	
 		`;
-		
+
 		const [comment]: Array<FindCommentById> = await Db.connection.raw(query);
 
 		return comment;
@@ -270,7 +270,7 @@ export class PostDB extends Db {
 		await Db.connection("comments").update({
 			comment,
 			updated_at
-		}).where({id});
+		}).where({ id });
 	}
 
 	public insertLikeComment = async (
@@ -301,6 +301,6 @@ export class PostDB extends Db {
 	};
 
 	public deleteComment = async (id: string): Promise<void> => {
-		await Db.connection("comments").delete().where({id});
+		await Db.connection("comments").delete().where({ id });
 	}
 }
