@@ -4,7 +4,7 @@
 O projeto Labeddit Backend, e uma aplicação voltada a uma rede social simples, que promove a interação entre usuarios. Onde é permitido fazer posts, comentarios em posts, curtir posts e comentarios enfim debater sobre qualquer assunto. Afinal é uma rede social !. 🍀🎉
 
 # Instruções 📜📰
-- Para acessar a documentação desta aplicação API. Acesse clicando [aqui]('').
+### Para acessar a documentação desta aplicação API. Acesse clicando [aqui](https://documenter.getpostman.com/view/29849540/2sA3Bj7tYr).
 - Para executar este projeto localmente e necessarios seguir o passo a passo:
 
 1 - Faça o clone deste repositorio em sua maquina utilizando o seguinte comando:
@@ -29,7 +29,7 @@ npm run dev
 http://localhost:3380/
 ```
 
-5 - Com isto a aplicação deverá executar normalmente. Para utilizar todos os seus recursos, consulte a documentação completa clicando [aqui]().
+5 - Com isto a aplicação deverá executar normalmente. Para utilizar todos os seus recursos, consulte a documentação completa clicando [aqui](https://documenter.getpostman.com/view/29849540/2sA3Bj7tYr).
 
 # Tecnologias Utilizadas: 🛠️🔩
 - **Typescript** 🛠️
