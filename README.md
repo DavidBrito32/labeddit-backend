@@ -1,54 +1,51 @@
-# Labeddit 🌍🚩
+# Labbedit - Backend
 
-Labeddit é uma plataforma de rede social onde os usuários podem compartilhar postagens, interagir um com o outro e participar de discussões sobre uma variedade de tópicos. Este projeto é uma aplicação backend desenvolvida em Node.js utilizando TypeScript, Express.js e SQLite.
+## Sobre 🔎🪄
+O projeto Labeddit Backend, e uma aplicação voltada a uma rede social simples, que promove a interação entre usuarios. Onde é permitido fazer posts, comentarios em posts, curtir posts e comentarios enfim debater sobre qualquer assunto. Afinal é uma rede social !. 🍀🎉
 
+# Instruções 📜📰
+- Para acessar a documentação desta aplicação API. Acesse clicando [aqui]('').
+- Para executar este projeto localmente e necessarios seguir o passo a passo:
 
-## Documentação da API no Postman: 📜🔎
-Para acessar a documentação desta aplicação no postman clique [aqui](link-da-documentacao-aqui)
+1 - Faça o clone deste repositorio em sua maquina utilizando o seguinte comando:
+```
+git clone https://github.com/DavidBrito32/labeddit-backend
+```
+2 - Verifique se sua maquina possui o Node.js instalado, pois é um requisito obrigatorio para executar este projeto: caso não possua clique [aqui](https://nodejs.org/en/download/current).
 
+3 - Após concluir os passos 1 e 2, abra o terminal dentro da pasta que você fez o clone e execute o seguinte script:
+```
+npm install
+```
+- O comando ira realizar a instalação das dependencias necessarias para o funcionamento correto do sistema.
 
-## Como Executar este Projeto: ⚙️🪄
+4 - Após concluir a instalação, execute o seguinte script:
+```
+npm run dev
+```
 
-1. Certifique-se de ter o Node.js e o npm instalados em sua máquina.
-   - Caso não possua instale clicando [aqui](https://nodejs.org/en);
-2. Clone este repositório:
+- este comando ira levantar um servidor local hospedando-o no seguinte endereço:
+```
+http://localhost:3380/
+```
 
-   ```
-   git clone https://github.com/DavidBrito32/labeddit-backend
-   ```
+5 - Com isto a aplicação deverá executar normalmente. Para utilizar todos os seus recursos, consulte a documentação completa clicando [aqui]().
 
-3. Após baixar o projeto instale as dependências do projeto com os seguintes passos:
+# Tecnologias Utilizadas: 🛠️🔩
+- **Typescript** 🛠️
+- **Node.JS** ⚙️
+- **Express.JS** 🌍
+- **Cors** 🌍 🔏
+- **Knex** ⚡
+- **Bcrypt** 🔐
+- **Json Web Token (JWT)** 🗼
+- **Uuid (Universal Unique Identifier)** 🏞️
+- **DotEnv** 🔯
+- **Sqlite** 💻
+- **ZOD** 💊
+- **POO (Object-oriented programming)** ⚡
+- **DTO** 🛠️
 
-   ```
-   cd labeddit
-   npm install
-   ```
+# Agradecimentos 🤝👍
 
-4. Execute o servidor:
-
-   ```
-   npm start
-   ```
-
-5. O servidor local estará em execução no seguinte endereço: `http://localhost:3380`.
-
-
-- Para mais detalhes sobre as rotas desta aplicação, acesse a documentação no Postman.
-
-## Tecnologias Utilizadas 🛠️⚙️ 
-
-- **TypeScript; 🚀**
-- **JavaScript; 🛠️**
-- **Node.js; 🌍**
-- **Express.js; 🛤️**
-- **uuid; 🌌**
-- **Knex; 🔨**
-- **SQLite; 🗄️**
-- **POO (Programação Orientada a Objetos); 🧱**
-- **DTO (Data Transfer Object); 📦**
-- **Bcrypt;  🔒**
-- **Json Web Token (JWT); 🎫**
-
-
-## Agradecimentos 🌟❤️
-Gostaria de expressar minha sincera gratidão à Labenu por ter me proporcionado em um ano conhecimentos que me possibilitaram a entender verdadeiramente como a roda funciona. A jornada de aprendizado foi incrível e transformadora, e estou imensamente grato pela oportunidade de crescer e me desenvolver como profissional. Os professores dedicados, o currículo abrangente e a comunidade acolhedora foram fundamentais para o meu sucesso. Obrigado, Labenu e todos os professores que fizeram parte dessa caminhada, por ter me proporcionado em um ano todo esse potencial que ira me abrir portas para um futuro promissor. 🎉✨
+- Em 2023 iniciei uma jornada rumo a um verdadeiro desconhecido. Eu ja havia tido contato com programação, porem nada comparavel ao conteudo que a _**Labenu**_ me proporcionou. Por tanto Gostaria de agradecer pelo excelente apoio junto a professores extremamente qualificados que nunca se negaram em nos ensinar! Meu muito Obrigado . . .
